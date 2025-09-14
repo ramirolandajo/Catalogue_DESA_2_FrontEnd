@@ -1,7 +1,7 @@
 import axios from "axios";
 
 //const API_URL = `${import.meta.env.VITE_API_BASE_URL}/products`;
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4002';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Crear instancia de Axios con autenticación básica
 const api = axios.create({
