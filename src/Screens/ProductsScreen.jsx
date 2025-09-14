@@ -9,7 +9,7 @@ import {
   deleteCategory,
   createBrand,
   deleteBrand
-} from "../store/abm/abmSlice.js";
+} from "../Store/abm/abmSlice.js";
 import ProductForm from "../Components/Abm/ProductForm.jsx";
 import ProductList from "../Components/Abm/ProductList.jsx";
 import ProductFilters from "../Components/Abm/ProductFilters.jsx";

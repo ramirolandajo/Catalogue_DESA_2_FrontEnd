@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { uploadFile } from "../../store/abm/abmSlice";
+import { uploadFile } from "../../Store/abm/abmSlice";
 
 export default function CsvUploadButton() {
   const [showModal, setShowModal] = useState(false);

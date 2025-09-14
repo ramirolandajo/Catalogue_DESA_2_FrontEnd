@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getBrands, getCategories } from "../../store/abm/abmSlice";
+import { getBrands, getCategories } from "../../Store/abm/abmSlice";
 
 export default function ProductFilters({ onFilter }) {
   const dispatch = useDispatch();

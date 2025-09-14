@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getBrands, getCategories } from "../../store/abm/abmSlice";
+import { getBrands, getCategories } from "../../Store/abm/abmSlice";
 import CategoryModal from "./CategoryModal";
 import { Pencil } from "lucide-react";
 import ImageEditModal from "./ImageEditModal";
