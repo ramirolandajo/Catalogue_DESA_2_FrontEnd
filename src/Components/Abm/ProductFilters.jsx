@@ -26,17 +26,17 @@ export default function ProductFilters({ onFilter }) {
   }, [searchText, categoryId, brandId, onFilter]);
 
   return (
-    <div className="bg-white shadow rounded-xl p-4 flex gap-4 items-center">
+    <div className="bg-white shadow rounded-xl p-4 flex gap-4 items-center mb-4 ">
       <input
         type="text"
         placeholder="Buscar producto..."
-        className="border rounded-lg p-2 w-full"
+        className="border border-gray-400 rounded-lg p-2 w-full"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
 
       <select
-        className="border rounded-lg p-2"
+        className="border border-gray-400 rounded-lg p-2"
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
       >
@@ -50,7 +50,7 @@ export default function ProductFilters({ onFilter }) {
       </select>
 
       <select
-        className="border rounded-lg p-2"
+        className="border border-gray-400 rounded-lg p-2"
         value={brandId}
         onChange={(e) => setBrandId(e.target.value)}
       >

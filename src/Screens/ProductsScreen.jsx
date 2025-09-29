@@ -8,34 +8,33 @@ import {
   createCategory,
   deleteCategory,
   createBrand,
-  deleteBrand
+  deleteBrand,
 } from "../Store/abm/abmSlice.js";
-import ProductForm from "../Components/Abm/ProductForm.jsx";
-import ProductList from "../Components/Abm/ProductList.jsx";
-import ProductFilters from "../Components/Abm/ProductFilters.jsx";
+import { Outlet } from "react-router-dom";
+import Sidebar from "../Components/Layout/Sidebar.jsx";
 import CategoryManagementModal from "../Components/Abm/CategoryManagementModal.jsx";
 import BrandManagementModal from "../Components/Abm/BrandManagementModal.jsx";
-import { Button } from "@mui/material";
 
 export default function ProductsScreen() {
   const dispatch = useDispatch();
   const items = useSelector((state) => state.abm.items);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const categories = useSelector((state) => state.abm.categories);
-  const brands = useSelector((state) => state.abm.brands)
-  const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
+  const brands = useSelector((state) => state.abm.brands);
+
+  const [editingProduct, setEditingProduct] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
 
-  // Actualizamos filteredProducts cada vez que cambian los items
   useEffect(() => {
     setFilteredProducts(items);
   }, [items]);
 
+  // Handlers de productos
   const handleSave = (product) => {
     if (editingProduct) {
       dispatch(editProduct(product));
@@ -44,99 +43,59 @@ export default function ProductsScreen() {
       dispatch(createProduct(product));
     }
   };
+  const handleDelete = (id) => dispatch(deleteProduct(id));
 
-  const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
-  }
-
-  // Función que recibe filtros desde ProductFilters
+  // Filtros
   const handleFilter = ({ searchText, categoryId, brandId }) => {
     let filtered = items;
-
     if (searchText) {
       filtered = filtered.filter((p) =>
         p.name.toLowerCase().includes(searchText.toLowerCase())
       );
     }
-
     if (categoryId) {
       filtered = filtered.filter((p) =>
         p.categories.some((cat) => cat.id === categoryId)
       );
     }
-
     if (brandId) {
       filtered = filtered.filter((p) => p.brand.id === brandId);
     }
-
     setFilteredProducts(filtered);
   };
 
-  const handleAddCategory = (name) => {
-    dispatch(createCategory(name))
-  };
+  // Categorías
+  const handleAddCategory = (name) => dispatch(createCategory(name));
+  const handleDeleteCategory = (id) => dispatch(deleteCategory(id));
 
-  const handleDeleteCategory = (id) => {
-    dispatch(deleteCategory(id))
-  };
-
-  const handleAddBrand = (newBrandName) => {
-    console.log("Agregar marca:", newBrandName);
-    dispatch(createBrand(newBrandName));
-  };
-
-  const handleDeleteBrand = (brandId) => {
-    console.log("Eliminar marca:", brandId);
-    dispatch(deleteBrand(brandId))
-  };
+  // Marcas
+  const handleAddBrand = (name) => dispatch(createBrand(name));
+  const handleDeleteBrand = (id) => dispatch(deleteBrand(id));
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Gestión de Productos</h1>
-
-      <ProductForm
-        onSave={handleSave}
-        editingProduct={editingProduct}
-        onCancel={() => setEditingProduct(null)}
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <Sidebar
+        onOpenCategories={() => setShowCategoryModal(true)}
+        onOpenBrands={() => setIsBrandModalOpen(true)}
+        setEditingProduct={setEditingProduct}
       />
-      <div className="flex gap-4 mb-6">
-        <Button
-          onClick={() => setShowCategoryModal(true)}
-          variant="contained"
-          sx={{
-            backgroundColor: '#2563EB', // azul similar a bg-blue-600
-            '&:hover': { backgroundColor: '#1D4ED8' }, // azul más oscuro para hover
-            color: 'white',
-          }}
-        >
-          Gestionar Categorías
-        </Button>
 
-        <Button
-          onClick={() => setIsBrandModalOpen(true)}
-          variant="contained"
-          sx={{
-            backgroundColor: '#7C3AED', // morado similar a bg-purple-600
-            '&:hover': { backgroundColor: '#6D28D9' }, // morado más oscuro para hover
-            color: 'white',
+      {/* Contenido dinámico */}
+      <div className="flex-1 p-6 overflow-auto">
+        <Outlet
+          context={{
+            products: filteredProducts,
+            handleSave,
+            handleDelete,
+            editingProduct,
+            setEditingProduct,
+            handleFilter,
           }}
-        >
-          Gestionar Marcas
-        </Button>
-
+        />
       </div>
 
-
-      {/* Pasamos la función handleFilter */}
-      <ProductFilters onFilter={handleFilter} />
-
-      <ProductList
-        products={filteredProducts}
-        onEdit={setEditingProduct}
-        onDelete={handleDelete}
-      />
-
-
+      {/* Modales */}
       {showCategoryModal && (
         <CategoryManagementModal
           categories={categories}
@@ -145,7 +104,6 @@ export default function ProductsScreen() {
           onClose={() => setShowCategoryModal(false)}
         />
       )}
-
       {isBrandModalOpen && (
         <BrandManagementModal
           brands={brands}
@@ -154,8 +112,6 @@ export default function ProductsScreen() {
           onClose={() => setIsBrandModalOpen(false)}
         />
       )}
-
     </div>
   );
 }
-

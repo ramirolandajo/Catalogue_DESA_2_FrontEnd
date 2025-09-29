@@ -5,7 +5,8 @@ const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Crear instancia de Axios con autenticación básica
 const api = axios.create({
-  baseURL: API_URL,
+  //baseURL: API_URL,
+  baseURL: "http://localhost:4002/api"
 });
 
 // Funciones usando la instancia
