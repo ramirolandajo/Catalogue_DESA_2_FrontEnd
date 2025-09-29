@@ -2,9 +2,14 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getBrands, getCategories } from "../../Store/abm/abmSlice";
 import CategoryModal from "./CategoryModal";
-import { Pencil } from "lucide-react";
 import ImageEditModal from "./ImageEditModal";
 import CsvUploadButton from "./CSVUpload";
+import TextField from "@mui/material/TextField";
+import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
+import { Checkbox, FormControlLabel, Select, MenuItem, InputLabel, FormControl, TextareaAutosize, Button } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const initialFormState = {
     productCode: "",
@@ -41,14 +46,15 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
 
     useEffect(() => {
         if (editingProduct) {
+            console.log(editingProduct)
             let normalizedImages = [];
             if (Array.isArray(editingProduct.images)) {
                 normalizedImages = editingProduct.images.flatMap(img => {
                     try {
-                        const parsed = JSON.parse(img); // caso ["url1", "url2"]
+                        const parsed = JSON.parse(img);
                         return Array.isArray(parsed) ? parsed : [img];
                     } catch {
-                        return [img]; // caso string plano
+                        return [img];
                     }
                 });
             }
@@ -64,7 +70,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                 calification: editingProduct.calification || 0,
                 categories: editingProduct.categories || [],
                 brand: editingProduct.brand || null,
-                images: normalizedImages,   // ✅ ya vienen normalizadas
+                images: normalizedImages,
                 hero: editingProduct.hero || false,
                 active: editingProduct.active ?? true,
                 new: editingProduct.new || false,
@@ -76,15 +82,12 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
         }
     }, [editingProduct]);
 
-
     useEffect(() => {
-        const unitPrice = parseFloat(form.unitPrice) || 0; // precio normal
+        const unitPrice = parseFloat(form.unitPrice) || 0;
         const discount = parseFloat(form.discount) || 0;
-
-        const price = unitPrice - unitPrice * (discount / 100); // precio con descuento
+        const price = unitPrice - unitPrice * (discount / 100);
         setForm((prev) => ({ ...prev, price: price.toFixed(2) }));
     }, [form.unitPrice, form.discount]);
-
 
     const handleChange = (e) => {
         const { name, type, value, checked } = e.target;
@@ -97,15 +100,12 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-
-        //TODO: Preparar onSave para guardar los datos como lo pide el back
-
         onSave({
             productCode: parseInt(form.productCode),
             name: form.name,
             description: form.description,
-            unitPrice: parseFloat(form.unitPrice),   // 👈 precio normal
-            price: parseFloat(form.price),           // 👈 precio con descuento
+            unitPrice: parseFloat(form.unitPrice),
+            price: parseFloat(form.price),
             discount: parseFloat(form.discount),
             stock: parseInt(form.stock),
             categories: form.categories.map(c => c.id),
@@ -119,7 +119,6 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             active: form.active
         });
 
-
         setForm(initialFormState);
     };
 
@@ -129,54 +128,67 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="bg-white shadow-md rounded-xl p-4 space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-4 space-y-4">
             <h2 className="text-lg font-semibold">
                 {editingProduct ? "Editar Producto" : "Nuevo Producto"}
             </h2>
 
-
             <div className="flex gap-4 flex-wrap items-end">
-                {form.images.length > 0 ? (
-                    form.images.map((imgUrl, idx) => (
-                        <div key={idx} className="relative w-40 h-40 group">
-                            <img
-                                src={imgUrl}
-                                alt={`Imagen ${idx + 1}`}
-                                className="w-full h-full object-cover rounded-lg group-hover:opacity-50 transition"
-                            />
+                {form.images.length > 0 && form.images.map((imgUrl, idx) => (
+                    <div key={idx} className="relative w-40 h-40 group">
+                        <img
+                            src={imgUrl}
+                            alt={`Imagen ${idx + 1}`}
+                            className="w-full h-full object-cover rounded-lg group-hover:opacity-20 transition absolute"
+                        />
 
-                            {/* Botón Editar */}
-                            <button
-                                type="button"
-                                onClick={() => setShowImageModal({ index: idx, url: imgUrl })}
-                                className="absolute top-2 left-2 bg-black/60 text-white p-1 rounded-full hover:bg-black/80"
-                            >
-                                <Pencil className="w-5 h-5" />
-                            </button>
+                        <IconButton
+                            size="small"
+                            onClick={() => setShowImageModal({ index: idx, url: imgUrl })}
 
-                            {/* Botón Eliminar */}
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setForm((prev) => ({
-                                        ...prev,
-                                        images: prev.images.filter((_, i) => i !== idx),
-                                    }))
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                zIndex: 10,
+                                transition: 'color 300ms ease, background-color 300ms ease',
+                                '&:hover': {
+
+                                    color: 'white', //
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
                                 }
-                                className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                    null
-                )}
+                            }}
+                        >
+                            <EditIcon fontSize="medium" />
+                        </IconButton>
+                        <IconButton
+                            size="small"
+                            onClick={() =>
+                                setForm(prev => ({
+                                    ...prev,
+                                    images: prev.images.filter((_, i) => i !== idx),
+                                }))
+                            }
 
-                {/* Botón Agregar Imagen */}
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 0,
+                                zIndex: 10,
+                                transition: 'color 300ms ease, background-color 300ms ease',
+                                color: "#d10003",
+                                '&:hover': {
+                                    color: 'white', //
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                }
+                            }}
+                        >
+                            <DeleteIcon fontSize="medium" />
+                        </IconButton>
+                    </div>
+
+                ))}
+
                 <button
                     type="button"
                     onClick={() => setShowImageModal({ index: null, url: "" })}
@@ -185,91 +197,76 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     + Agregar imagen
                 </button>
 
-                {/* CSVUpload solo si no hay imágenes */}
                 {!editingProduct && <CsvUploadButton />}
             </div>
 
-
-
-
             <div className="grid grid-cols-2 gap-4">
-                <input
+                <TextField
                     name="productCode"
-                    placeholder="Código de producto"
+                    label="Código de producto"
                     type="number"
                     value={form.productCode}
                     onChange={handleChange}
-                    className="border rounded-lg p-2 w-full"
                     required
                 />
-                <input
+                <TextField
                     name="name"
-                    placeholder="Nombre"
+                    label="Nombre"
                     value={form.name}
                     onChange={handleChange}
-                    className="border rounded-lg p-2 w-full"
                     required
                 />
-                <input
+                <TextField
                     name="unitPrice"
-                    placeholder="Precio Normal"
+                    label="Precio Normal"
                     type="number"
                     value={form.unitPrice}
                     onChange={handleChange}
-                    className="border rounded-lg p-2 w-full"
                     required
                 />
-                <input
+                <TextField
                     name="discount"
-                    placeholder="Descuento (%)"
+                    label="Descuento (%)"
                     type="number"
                     value={form.discount}
                     onChange={handleChange}
-                    className="border rounded-lg p-2 w-full"
                 />
-                <input
+                <TextField
                     name="price"
-                    placeholder="Precio con Descuento"
+                    label="Precio con Descuento"
                     type="number"
                     value={form.price}
-                    readOnly
-                    className="border rounded-lg p-2 w-full bg-gray-100 cursor-not-allowed"
+                    InputProps={{ readOnly: true }}
                 />
-
-                <input
+                <TextField
                     name="stock"
-                    placeholder="Stock"
+                    label="Stock"
                     type="number"
                     value={form.stock}
                     onChange={handleChange}
-                    className="border rounded-lg p-2 w-full"
                     required
                 />
-                <input
+                <TextField
                     name="calification"
-                    placeholder="Calificación"
+                    label="Calificación"
                     type="number"
                     step="0.1"
                     value={form.calification}
-                    onChange={handleChange}
-                    className="border rounded-lg p-2 w-full bg-gray-100 cursor-not-allowed"
-                    readOnly
+                    InputProps={{ readOnly: true }}
                 />
+
                 <CategoryModal
                     categories={categories}
                     selected={form.categories}
-                    onChange={(newCategories) =>
-                        setForm((prev) => ({ ...prev, categories: newCategories }))
-                    }
+                    onChange={(newCategories) => setForm(prev => ({ ...prev, categories: newCategories }))}
                 />
-
             </div>
 
-
-            {/* Dropdown de Marca */}
-            <div>
-                <label className="block font-semibold mb-1">Marca</label>
-                <select
+            <FormControl fullWidth>
+                <InputLabel id="brand-label">Marca</InputLabel>
+                <Select
+                    labelId="brand-label"
+                    label="Marca"
                     name="brand"
                     value={form.brand?.id || ""}
                     onChange={(e) => {
@@ -277,57 +274,65 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                         const selectedBrand = brands.find((b) => b.id === brandId);
                         setForm((prev) => ({ ...prev, brand: selectedBrand }));
                     }}
-                    className="border rounded-lg p-2 w-full"
                     required
                 >
-                    <option value="">Seleccionar marca</option>
+                    <MenuItem value="">Seleccionar marca</MenuItem>
                     {brands.map((b) => (
-                        <option key={b.id} value={b.id}>
+                        <MenuItem key={b.id} value={b.id}>
                             {b.name}
-                        </option>
+                        </MenuItem>
                     ))}
-                </select>
-            </div>
+                </Select>
+            </FormControl>
 
-            <textarea
+            <TextareaAutosize
                 name="description"
                 placeholder="Descripción"
                 value={form.description}
                 onChange={handleChange}
-                className="border rounded-lg p-2 w-full"
+                className="border rounded-lg p-2 w-full min-h-[80px] mt-4"
             />
 
             <div className="grid grid-cols-2 gap-4">
-                {["hero", "active", "new", "bestSeller", "featured"].map((field) => (
-                    <label key={field} className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            name={field}
-                            checked={form[field]}
-                            onChange={handleChange}
-                        />
-                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </label>
+                {["hero", "active", "new", "bestSeller", "featured"].map(field => (
+                    <FormControlLabel
+                        key={field}
+                        control={<Checkbox name={field} checked={form[field]} onChange={handleChange} />}
+                        label={field.charAt(0).toUpperCase() + field.slice(1)}
+                    />
                 ))}
             </div>
 
             <div className="flex gap-3">
-                <button
+                <Button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    variant="contained"
+                    sx={{
+                        backgroundColor: 'green',
+                        color: 'white',
+                        '&:hover': { backgroundColor: 'darkgreen' },
+                    }}
                 >
                     {editingProduct ? "Actualizar" : "Guardar"}
-                </button>
+                </Button>
+
                 {editingProduct && (
-                    <button
+                    <Button
                         type="button"
+                        variant="outlined"
+                        sx={{
+                            color: 'darkred',
+                            borderColor: 'darkred',
+                            '&:hover': { backgroundColor: 'darkred', color: 'white', borderColor: 'darkred' },
+                        }}
                         onClick={handleCancel}
-                        className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
                     >
                         Cancelar
-                    </button>
+                    </Button>
                 )}
             </div>
+
+
             {showCategories && (
                 <CategoryModal
                     categories={categories}
@@ -341,13 +346,11 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                 <ImageEditModal
                     initialUrl={showImageModal.url}
                     onSave={(newUrl) => {
-                        setForm((prev) => {
+                        setForm(prev => {
                             let updatedImages = [...prev.images];
                             if (showImageModal.index !== null) {
-                                // Editar imagen existente
                                 updatedImages[showImageModal.index] = newUrl;
                             } else {
-                                // Agregar nueva imagen
                                 updatedImages.push(newUrl);
                             }
                             return { ...prev, images: updatedImages };
@@ -357,8 +360,6 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     onClose={() => setShowImageModal(false)}
                 />
             )}
-
-
         </form>
     );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button, TextField } from "@mui/material";
 
 export default function BrandManagementModal({
     brands,
@@ -17,27 +18,38 @@ export default function BrandManagementModal({
 
     return (
         <div className="fixed inset-0 bg-black/[0.75] flex justify-center items-center z-50">
-            <div className="bg-white rounded-xl p-6 w-96 shadow-lg">
+            <div className="bg-white rounded-xl p-6 w-120 shadow-lg">
                 <h2 className="text-lg font-bold mb-4">Gestión de Marcas</h2>
 
-                <ul className="mb-4 max-h-48 overflow-y-auto p-2">
+                <ul className="mb-10 max-h-120 overflow-y-auto p-2 space-y-2">
                     {brands.length === 0 ? (
                         <li className="text-gray-500 text-sm">No hay marcas cargadas.</li>
                     ) : (
                         brands.map((brand) => (
                             <li
                                 key={brand.id}
-                                className="flex justify-between items-center border-b py-1"
+                                className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-lg p-2 shadow-sm transition"
                             >
-                                <span>{brand.name}</span>
-                                {brand.active ? (
-                                    <button
+                                <span
+                                    className={`font-medium ${!brand.active ? "italic text-gray-500 line-through" : "text-gray-800"
+                                        }`}
+                                >
+                                    {brand.name}
+                                </span>
+                                {brand.active && (
+                                    <Button
+                                        variant="outlined"
+                                        sx={{
+                                            color: 'darkred',
+                                            borderColor: 'darkred',
+                                            fontSize: '0.8rem',
+                                            '&:hover': { backgroundColor: 'darkred', color: 'white', borderColor: 'darkred' },
+                                        }}
                                         onClick={() => onDeleteBrand(brand.id)}
-                                        className="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 text-sm"
                                     >
                                         Eliminar
-                                    </button>
-                                ) : null}
+                                    </Button>
+                                )}
                             </li>
                         ))
                     )}
@@ -45,29 +57,36 @@ export default function BrandManagementModal({
 
                 {/* Agregar nueva marca */}
                 <div className="flex gap-2 mb-4">
-                    <input
-                        type="text"
-                        placeholder="Nueva marca..."
+                    <TextField
+                        label="Nueva marca"
                         value={newBrand}
                         onChange={(e) => setNewBrand(e.target.value)}
-                        className="border rounded-lg p-2 flex-1"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
                     />
-                    <button
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: 'green',
+                            color: 'white',
+                            '&:hover': { backgroundColor: 'darkgreen' },
+                        }}
                         onClick={handleAdd}
-                        className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 text-sm"
                     >
                         Agregar
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Cerrar */}
                 <div className="flex justify-end">
-                    <button
+                    <Button
+                        variant="contained"
+                        sx={{ backgroundColor: 'gray', '&:hover': { backgroundColor: '#555555' } }}
                         onClick={onClose}
-                        className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
                     >
                         Cerrar
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

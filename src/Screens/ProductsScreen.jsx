@@ -15,6 +15,7 @@ import ProductList from "../Components/Abm/ProductList.jsx";
 import ProductFilters from "../Components/Abm/ProductFilters.jsx";
 import CategoryManagementModal from "../Components/Abm/CategoryManagementModal.jsx";
 import BrandManagementModal from "../Components/Abm/BrandManagementModal.jsx";
+import { Button } from "@mui/material";
 
 export default function ProductsScreen() {
   const dispatch = useDispatch();
@@ -99,18 +100,30 @@ export default function ProductsScreen() {
         onCancel={() => setEditingProduct(null)}
       />
       <div className="flex gap-4 mb-6">
-        <button
+        <Button
           onClick={() => setShowCategoryModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          variant="contained"
+          sx={{
+            backgroundColor: '#2563EB', // azul similar a bg-blue-600
+            '&:hover': { backgroundColor: '#1D4ED8' }, // azul más oscuro para hover
+            color: 'white',
+          }}
         >
           Gestionar Categorías
-        </button>
-        <button
+        </Button>
+
+        <Button
           onClick={() => setIsBrandModalOpen(true)}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+          variant="contained"
+          sx={{
+            backgroundColor: '#7C3AED', // morado similar a bg-purple-600
+            '&:hover': { backgroundColor: '#6D28D9' }, // morado más oscuro para hover
+            color: 'white',
+          }}
         >
           Gestionar Marcas
-        </button>
+        </Button>
+
       </div>
 
 

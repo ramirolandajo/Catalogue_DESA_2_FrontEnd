@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button, TextField } from "@mui/material";
 
 export default function CategoryManagementModal({
     categories,
@@ -17,58 +18,74 @@ export default function CategoryManagementModal({
 
     return (
         <div className="fixed inset-0 bg-black/[0.75] flex justify-center items-center z-50">
-            <div className="bg-white rounded-xl p-6 w-96 shadow-lg">
+            <div className="bg-white rounded-xl p-6 w-120 shadow-lg">
                 <h2 className="text-lg font-bold mb-4">Gestión de Categorías</h2>
 
-                <ul className="mb-4 max-h-48 overflow-y-auto p-2">
+                <ul className="mb-10 max-h-120 overflow-y-auto p-2 space-y-2">
                     {categories.length === 0 ? (
                         <li className="text-gray-500 text-sm">No hay categorías cargadas.</li>
                     ) : (
                         categories.map((cat) => (
                             <li
                                 key={cat.id}
-                                className="flex justify-between items-center border-b py-1"
+                                className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-lg p-2 shadow-sm transition "
                             >
-                                <span>{cat.name}</span>
-                                {cat.active ? (
-                                                                    <button
-                                    onClick={() => onDeleteCategory(cat.id)}
-                                    className="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 text-sm"
+                                <span
+                                    className={`font-medium ${!cat.active ? "italic text-gray-500 line-through" : "text-gray-800"
+                                        }`}
                                 >
-                                    Eliminar
-                                </button>
-                                ) : null}
-
+                                    {cat.name}
+                                </span>
+                                {cat.active && (
+                                    <Button
+                                        variant="outlined"
+                                        sx={{
+                                            color: 'darkred',
+                                            borderColor: 'darkred',
+                                            fontSize: '0.8rem',
+                                            '&:hover': { backgroundColor: 'darkred', color: 'white', borderColor: 'darkred' },
+                                        }}
+                                        onClick={() => onDeleteCategory(cat.id)}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                )}
                             </li>
                         ))
                     )}
                 </ul>
-
                 {/* Agregar nueva categoría */}
                 <div className="flex gap-2 mb-4">
-                    <input
-                        type="text"
-                        placeholder="Nueva categoría..."
+                    <TextField
+                        label="Nueva categoría"
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
-                        className="border rounded-lg p-2 flex-1"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
                     />
-                    <button
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: 'green',
+                            color: 'white',
+                            '&:hover': { backgroundColor: 'darkgreen' }, // verde más oscuro
+                        }}
                         onClick={handleAdd}
-                        className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 text-sm"
                     >
                         Agregar
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Cerrar */}
                 <div className="flex justify-end">
-                    <button
+                    <Button
+                        variant="contained"
+                        sx={{ backgroundColor: 'gray', '&:hover': { backgroundColor: '#555555' } }}
                         onClick={onClose}
-                        className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
                     >
                         Cerrar
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
