@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProducts,
@@ -9,6 +9,8 @@ import {
   deleteCategory,
   createBrand,
   deleteBrand,
+  reactivateCategory,
+  reactivateBrand,
 } from "../Store/abm/abmSlice.js";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../Components/Layout/Sidebar.jsx";
@@ -46,31 +48,36 @@ export default function ProductsScreen() {
   const handleDelete = (id) => dispatch(deleteProduct(id));
 
   // Filtros
-  const handleFilter = ({ searchText, categoryId, brandId }) => {
-    let filtered = items;
-    if (searchText) {
-      filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-    if (categoryId) {
-      filtered = filtered.filter((p) =>
-        p.categories.some((cat) => cat.id === categoryId)
-      );
-    }
-    if (brandId) {
-      filtered = filtered.filter((p) => p.brand.id === brandId);
-    }
-    setFilteredProducts(filtered);
-  };
+  const handleFilter = useCallback(
+    ({ searchText, categoryId, brandId }) => {
+      let filtered = items;
+      if (searchText) {
+        filtered = filtered.filter((p) =>
+          p.name.toLowerCase().includes(searchText.toLowerCase())
+        );
+      }
+      if (categoryId) {
+        filtered = filtered.filter((p) =>
+          p.categories.some((cat) => cat.id === categoryId)
+        );
+      }
+      if (brandId) {
+        filtered = filtered.filter((p) => p.brand.id === brandId);
+      }
+      setFilteredProducts(filtered);
+    },
+    [items] // Solo se redefine si cambian los productos
+  );
 
   // Categorías
-  const handleAddCategory = (name) => dispatch(createCategory(name));
+  const handleAddCategory = (cat) => dispatch(createCategory(cat));
   const handleDeleteCategory = (id) => dispatch(deleteCategory(id));
+  const handleReactivateCategory = (id) => dispatch(reactivateCategory(id))
 
   // Marcas
   const handleAddBrand = (name) => dispatch(createBrand(name));
   const handleDeleteBrand = (id) => dispatch(deleteBrand(id));
+  const handleReactivateBrand = (id) => dispatch(reactivateBrand(id))
 
   return (
     <div className="flex h-screen">
@@ -102,6 +109,7 @@ export default function ProductsScreen() {
           onAddCategory={handleAddCategory}
           onDeleteCategory={handleDeleteCategory}
           onClose={() => setShowCategoryModal(false)}
+          onActivateCategory={handleReactivateCategory}
         />
       )}
       {isBrandModalOpen && (
@@ -110,6 +118,7 @@ export default function ProductsScreen() {
           onAddBrand={handleAddBrand}
           onDeleteBrand={handleDeleteBrand}
           onClose={() => setIsBrandModalOpen(false)}
+          onActivateBrand={handleReactivateBrand}
         />
       )}
     </div>

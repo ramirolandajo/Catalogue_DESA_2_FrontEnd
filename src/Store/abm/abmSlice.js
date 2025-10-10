@@ -49,6 +49,13 @@ export const deleteCategory = createAsyncThunk("abm/deleteCategory", async (id) 
   return id;
 })
 
+export const reactivateCategory = createAsyncThunk("abm/reactivateCategory", async (id) => {
+  const res = await api.reactivateCategory(id);
+  console.log('Categoria reactivada! RTA:', res.data);
+  return id;
+})
+
+
 export const createBrand = createAsyncThunk("abm/createBrand", async (brand) => {
   const res = await api.createBrand(brand);
   console.log('Marca creada! RTA:', res.data);
@@ -58,6 +65,12 @@ export const createBrand = createAsyncThunk("abm/createBrand", async (brand) => 
 export const deleteBrand = createAsyncThunk("abm/deleteBrand", async (id) => {
   const res = await api.deleteBrand(id);
   console.log('Marca eliminada! RTA:', res.data);
+  return id;
+})
+
+export const reactivateBrand = createAsyncThunk("abm/reactivateBrand", async (id) => {
+  const res = await api.reactivateBrand(id);
+  console.log('Marca reactivada! RTA:', res.data);
   return id;
 })
 
@@ -110,6 +123,15 @@ const abmSlice = createSlice({
           state.categories[index].active = false;
         }
       })
+      .addCase(reactivateCategory.fulfilled, (state, action) => {
+        const categoryCode = action.payload;
+        const index = state.categories.findIndex(
+          (c) => c.id === categoryCode
+        )
+        if (index !== 1) {
+          state.categories[index].active = true;
+        }
+      })
       .addCase(createBrand.fulfilled, (state, action) => {
         state.brands.push(action.payload);
       })
@@ -120,6 +142,15 @@ const abmSlice = createSlice({
         )
         if (index !== 1) {
           state.brands[index].active = false;
+        }
+      })
+      .addCase(reactivateBrand.fulfilled, (state, action) => {
+        const brandCode = action.payload;
+        const index = state.brands.findIndex(
+          (b) => b.id === brandCode
+        )
+        if (index !== 1) {
+          state.brands[index].active = true;
         }
       })
   },

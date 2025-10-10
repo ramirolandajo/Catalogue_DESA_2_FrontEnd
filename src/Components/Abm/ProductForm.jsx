@@ -108,13 +108,15 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             price: parseFloat(form.price),
             discount: parseFloat(form.discount),
             stock: parseInt(form.stock),
+            categoryCodes: form.categories.map(c => c.id),
             categories: form.categories.map(c => c.id),
+            brandCode: form.brand.id,
             brand: form.brand.id,
             calification: parseFloat(form.calification),
             images: form.images,
-            isNew: form.new,
-            isBestSeller: form.bestSeller,
-            isFeatured: form.featured,
+            new: form.new,
+            bestSeller: form.bestSeller,
+            featured: form.featured,
             hero: form.hero,
             active: form.active
         });
