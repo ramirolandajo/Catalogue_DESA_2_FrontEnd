@@ -31,6 +31,12 @@ export const createProduct = createAsyncThunk("abm/createProduct", async (produc
   return res.data;
 })
 
+export const reactivateProduct = createAsyncThunk("abm/reactivateProduct", async (productCode) => {
+  const res = await api.reactivateProduct(productCode);
+  return productCode;
+})
+
+
 export const uploadFile = createAsyncThunk("abm/uploadFile", async (file) => {
   const res = await api.uploadBatch(file);
   console.log(res);
@@ -109,6 +115,15 @@ const abmSlice = createSlice({
         );
         if (index !== -1) {
           state.items[index].active = false;
+        }
+      })
+      .addCase(reactivateProduct.fulfilled, (state, action) => {
+        const productCode = action.payload;
+        const index = state.items.findIndex(
+          (p) => p.productCode === productCode
+        );
+        if (index !== -1) {
+          state.items[index].active = true;
         }
       })
       .addCase(createCategory.fulfilled, (state, action) => {

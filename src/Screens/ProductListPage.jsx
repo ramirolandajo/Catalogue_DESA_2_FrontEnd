@@ -3,7 +3,7 @@ import ProductFilters from "../Components/Abm/ProductFilters.jsx";
 import ProductList from "../Components/Abm/ProductList.jsx";
 
 export default function ProductListPage() {
-  const { products, handleFilter, handleDelete, setEditingProduct } = useOutletContext();
+  const { products, handleFilter, handleDelete, setEditingProduct, handleActivate } = useOutletContext();
   const navigate = useNavigate();
 
   const handleEdit = (product) => {
@@ -18,7 +18,8 @@ export default function ProductListPage() {
       <ProductList 
         products={products} 
         onEdit={handleEdit} 
-        onDelete={handleDelete} 
+        onDelete={handleDelete}
+        onActivate={handleActivate}
       />
     </div>
   );

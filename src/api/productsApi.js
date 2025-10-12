@@ -18,6 +18,8 @@ export const updateStock = (code, stock) => api.patch(`/products/updateStock/${c
 export const updateUnitPrice = (code, unitPrice) => api.patch(`/products/updateUnitPrice/${code}`, { newPrice: unitPrice });
 export const updateDiscount = (code, discount) => api.patch(`/products/updateDiscount/${code}`, { newDiscount: discount });
 export const deleteProduct = (code) => api.delete(`/products/delete/${code}`);
+export const reactivateProduct = (code) => api.patch(`/products/activate/${code}`)
+
 export const uploadBatch = (fileCSV) => {
   const formData = new FormData();
   formData.append('file', fileCSV);

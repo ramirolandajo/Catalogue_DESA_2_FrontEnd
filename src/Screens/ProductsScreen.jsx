@@ -11,6 +11,7 @@ import {
   deleteBrand,
   reactivateCategory,
   reactivateBrand,
+  reactivateProduct,
 } from "../Store/abm/abmSlice.js";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../Components/Layout/Sidebar.jsx";
@@ -46,6 +47,7 @@ export default function ProductsScreen() {
     }
   };
   const handleDelete = (id) => dispatch(deleteProduct(id));
+  const handleActivate = (id) => dispatch(reactivateProduct(id));
 
   // Filtros
   const handleFilter = useCallback(
@@ -98,6 +100,7 @@ export default function ProductsScreen() {
             editingProduct,
             setEditingProduct,
             handleFilter,
+            handleActivate
           }}
         />
       </div>
