@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button, Typography } from "@mui/material";
 
 export default function ImageEditModal({ initialUrl, onSave, onClose }) {
     const [newUrl, setNewUrl] = useState(initialUrl || "");
@@ -23,21 +24,32 @@ export default function ImageEditModal({ initialUrl, onSave, onClose }) {
                         required
                     />
 
+                    {/* Preview de la imagen */}
+                    {newUrl && (
+                        <div className="flex justify-center mb-4 ">
+                            <img
+                                src={newUrl}
+                                alt="Preview"
+                                className="w-48 h-48 object-cover rounded-md border border-gray-400 bg-gray-200"
+                            />
+                        </div>
+                    )}
+
                     <div className="flex justify-end gap-3">
-                        <button
-                            type="button"
+                        <Button
+                            variant="contained"
                             onClick={onClose}
-                            className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                            sx={{ backgroundColor: 'gray', '&:hover': { backgroundColor: '#555555' } }}
                         >
                             Cancelar
-                        </button>
-                        <button
-                            type="button"
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={{ backgroundColor: 'green', '&:hover': { backgroundColor: 'darkgreen' } }}
                             onClick={handleSave}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
                             Guardar
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

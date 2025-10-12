@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../Store/abm/abmSlice";
-
+import { Button, Typography } from "@mui/material";
+import ExcelIcon from "../../assets/excel-icon.png"
 export default function CsvUploadButton() {
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState(null);
+  const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
   const handleFileChange = (e) => {
@@ -23,13 +25,14 @@ export default function CsvUploadButton() {
 
   return (
     <>
-      {/* Botón verde */}
-      <button
+      {/* Botón verde para abrir modal */}
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: 'green', '&:hover': { backgroundColor: 'darkgreen' } }}
         onClick={() => setShowModal(true)}
-        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 max-h-15"
       >
         Cargar productos por .csv
-      </button>
+      </Button>
 
       {/* Modal */}
       {showModal && (
@@ -37,33 +40,52 @@ export default function CsvUploadButton() {
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Subir archivo CSV</h2>
 
+            {/* Botón para seleccionar archivo */}
+            <Button
+              variant="outlined"
+              onClick={() => fileInputRef.current.click()}
+              fullWidth
+              sx={{ mb: 2, color: 'green', borderColor: 'darkgreen', backgroundColor: 'rgba(50, 205, 50, 0.1)', '&:hover': { backgroundColor: 'darkgreen', color: 'white' } }}
+            >
+              {file ? "Cambiar archivo" : "Seleccionar archivo CSV"}
+            </Button>
+
+            {/* Input oculto */}
             <input
               type="file"
               accept=".csv"
+              ref={fileInputRef}
               onChange={handleFileChange}
-              className="mb-2 bg-gray-300 border-1"
+              style={{ display: 'none' }}
             />
 
             {/* Preview del archivo seleccionado */}
             {file && (
-              <div className="mb-4 text-sm text-gray-700">
-                Archivo seleccionado: <strong>{file.name}</strong>
+              <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-md mb-4">
+                <img
+                  src={ExcelIcon} // reemplaza con la ruta de tu ícono Excel
+                  alt="Excel"
+                  className="w-6 h-6"
+                />
+                <span className="text-gray-800 font-medium truncate">{file.name}</span>
               </div>
             )}
 
-            <div className="flex justify-end gap-3">
-              <button
+            <div className="flex justify-end gap-3 mt-4">
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: 'gray', '&:hover': { backgroundColor: '#555555' } }}
                 onClick={() => { setShowModal(false); setFile(null); }}
-                className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: 'green', '&:hover': { backgroundColor: 'darkgreen' } }}
                 onClick={handleUpload}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
               >
                 Subir
-              </button>
+              </Button>
             </div>
           </div>
         </div>
