@@ -32,7 +32,7 @@ export default function CategoryManagementModal({
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
-      "¿Estás seguro que deseas eliminar la categoría?"
+      "¿Estás seguro que deseas desactivar la categoría?"
     );
     if (confirmed) {
       onDeleteCategory(id);
@@ -94,7 +94,7 @@ export default function CategoryManagementModal({
                     }}
                     onClick={() => handleDelete(cat.id)}
                   >
-                    Eliminar
+                    Desactivar
                   </Button>
                 ) : (
                   <Button

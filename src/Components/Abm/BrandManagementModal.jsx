@@ -33,7 +33,7 @@ export default function BrandManagementModal({
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
-      "¿Estás seguro que deseas eliminar la marca?"
+      "¿Estás seguro que deseas desactivar la marca?"
     );
     if (confirmed) {
       onDeleteBrand(id);
@@ -93,7 +93,7 @@ export default function BrandManagementModal({
                     }}
                     onClick={() => handleDelete(brand.id)}
                   >
-                    Eliminar
+                    Desactivar
                   </Button>
                 ) : (
                   <Button

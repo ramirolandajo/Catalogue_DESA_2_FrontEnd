@@ -75,7 +75,7 @@ export default function ProductList({ products, onEdit, onDelete, onActivate }) 
                           startIcon={<DeleteIcon />}
                           onClick={() => onDelete(p.productCode)}
                         >
-                          Eliminar
+                          Desactivar
                         </Button>
                       ) : (
                         <Button

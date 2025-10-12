@@ -7,9 +7,17 @@ import CsvUploadButton from "./CSVUpload";
 import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
-import { Checkbox, FormControlLabel, Select, MenuItem, InputLabel, FormControl, TextareaAutosize, Button } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-
+import {
+    Checkbox,
+    FormControlLabel,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+    TextareaAutosize,
+    Button,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const initialFormState = {
     productCode: "",
@@ -46,10 +54,9 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
 
     useEffect(() => {
         if (editingProduct) {
-            console.log(editingProduct)
             let normalizedImages = [];
             if (Array.isArray(editingProduct.images)) {
-                normalizedImages = editingProduct.images.flatMap(img => {
+                normalizedImages = editingProduct.images.flatMap((img) => {
                     try {
                         const parsed = JSON.parse(img);
                         return Array.isArray(parsed) ? parsed : [img];
@@ -58,14 +65,18 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     }
                 });
             }
-
+            console.log(editingProduct)
             setForm({
                 productCode: editingProduct.productCode || "",
                 name: editingProduct.name || "",
                 description: editingProduct.description || "",
                 price: editingProduct.price || "",
                 unitPrice: editingProduct.unitPrice || 0,
-                discount: editingProduct.discount || "",
+                // 🔹 Convertimos el descuento decimal a porcentaje (ej: 0.5 → 50)
+                discount:
+                    editingProduct.discount !== undefined
+                        ? editingProduct.discount * 100
+                        : "",
                 stock: editingProduct.stock || "",
                 calification: editingProduct.calification || 0,
                 categories: editingProduct.categories || [],
@@ -82,10 +93,11 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
         }
     }, [editingProduct]);
 
+    // 🔹 Recalcula el precio con descuento según el porcentaje
     useEffect(() => {
         const unitPrice = parseFloat(form.unitPrice) || 0;
-        const discount = parseFloat(form.discount) || 0;
-        const price = unitPrice - unitPrice * (discount / 100);
+        const discountPercent = parseFloat(form.discount) || 0;
+        const price = unitPrice - unitPrice * (discountPercent / 100);
         setForm((prev) => ({ ...prev, price: price.toFixed(2) }));
     }, [form.unitPrice, form.discount]);
 
@@ -106,10 +118,10 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             description: form.description,
             unitPrice: parseFloat(form.unitPrice),
             price: parseFloat(form.price),
-            discount: parseFloat(form.discount),
+            discount: parseFloat(form.discount) / 100,
             stock: parseInt(form.stock),
-            categoryCodes: form.categories.map(c => c.id),
-            categories: form.categories.map(c => c.id),
+            categoryCodes: form.categories.map((c) => c.id),
+            categories: form.categories.map((c) => c.id),
             brandCode: form.brand.id,
             brand: form.brand.id,
             calification: parseFloat(form.calification),
@@ -118,7 +130,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             bestSeller: form.bestSeller,
             featured: form.featured,
             hero: form.hero,
-            active: form.active
+            active: form.active,
         });
 
         setForm(initialFormState);
@@ -130,66 +142,66 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-xl p-4 space-y-4">
+        <form
+            onSubmit={handleSubmit}
+            className="bg-white shadow-md rounded-xl p-4 space-y-4"
+        >
             <h2 className="text-lg font-semibold">
                 {editingProduct ? "Editar Producto" : "Nuevo Producto"}
             </h2>
 
+            {/* --- IMÁGENES --- */}
             <div className="flex gap-4 flex-wrap items-end">
-                {form.images.length > 0 && form.images.map((imgUrl, idx) => (
-                    <div key={idx} className="relative w-40 h-40 group">
-                        <img
-                            src={imgUrl}
-                            alt={`Imagen ${idx + 1}`}
-                            className="w-full h-full object-cover rounded-lg group-hover:opacity-20 transition absolute"
-                        />
+                {form.images.length > 0 &&
+                    form.images.map((imgUrl, idx) => (
+                        <div key={idx} className="relative w-40 h-40 group">
+                            <img
+                                src={imgUrl}
+                                alt={`Imagen ${idx + 1}`}
+                                className="w-full h-full object-cover rounded-lg group-hover:opacity-20 transition absolute"
+                            />
 
-                        <IconButton
-                            size="small"
-                            onClick={() => setShowImageModal({ index: idx, url: imgUrl })}
+                            <IconButton
+                                size="small"
+                                onClick={() => setShowImageModal({ index: idx, url: imgUrl })}
+                                sx={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    zIndex: 10,
+                                    "&:hover": {
+                                        color: "white",
+                                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                    },
+                                }}
+                            >
+                                <EditIcon fontSize="medium" />
+                            </IconButton>
 
-                            sx={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                zIndex: 10,
-                                transition: 'color 300ms ease, background-color 300ms ease',
-                                '&:hover': {
-
-                                    color: 'white', //
-                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            <IconButton
+                                size="small"
+                                onClick={() =>
+                                    setForm((prev) => ({
+                                        ...prev,
+                                        images: prev.images.filter((_, i) => i !== idx),
+                                    }))
                                 }
-                            }}
-                        >
-                            <EditIcon fontSize="medium" />
-                        </IconButton>
-                        <IconButton
-                            size="small"
-                            onClick={() =>
-                                setForm(prev => ({
-                                    ...prev,
-                                    images: prev.images.filter((_, i) => i !== idx),
-                                }))
-                            }
-
-                            sx={{
-                                position: 'absolute',
-                                top: 0,
-                                right: 0,
-                                zIndex: 10,
-                                transition: 'color 300ms ease, background-color 300ms ease',
-                                color: "#d10003",
-                                '&:hover': {
-                                    color: 'white', //
-                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                }
-                            }}
-                        >
-                            <DeleteIcon fontSize="medium" />
-                        </IconButton>
-                    </div>
-
-                ))}
+                                sx={{
+                                    position: "absolute",
+                                    top: 0,
+                                    right: 0,
+                                    zIndex: 10,
+                                    color: "#d10003",
+                                    "&:hover": {
+                                        color: "white",
+                                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                    },
+                                }}
+                            >
+                                <DeleteIcon fontSize="medium" />
+                            </IconButton>
+                        </div>
+                    ))}
 
                 <button
                     type="button"
@@ -202,6 +214,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                 {!editingProduct && <CsvUploadButton />}
             </div>
 
+            {/* --- CAMPOS --- */}
             <div className="grid grid-cols-2 gap-4">
                 <TextField
                     name="productCode"
@@ -260,10 +273,13 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                 <CategoryModal
                     categories={categories}
                     selected={form.categories}
-                    onChange={(newCategories) => setForm(prev => ({ ...prev, categories: newCategories }))}
+                    onChange={(newCategories) =>
+                        setForm((prev) => ({ ...prev, categories: newCategories }))
+                    }
                 />
             </div>
 
+            {/* --- MARCA --- */}
             <FormControl fullWidth>
                 <InputLabel id="brand-label">Marca</InputLabel>
                 <Select
@@ -295,24 +311,28 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                 className="border rounded-lg p-2 w-full min-h-[80px] mt-4"
             />
 
+            {/* --- CHECKBOXES --- */}
             <div className="grid grid-cols-2 gap-4">
-                {["hero", "active", "new", "bestSeller", "featured"].map(field => (
+                {["hero", "active", "new", "bestSeller", "featured"].map((field) => (
                     <FormControlLabel
                         key={field}
-                        control={<Checkbox name={field} checked={form[field]} onChange={handleChange} />}
+                        control={
+                            <Checkbox name={field} checked={form[field]} onChange={handleChange} />
+                        }
                         label={field.charAt(0).toUpperCase() + field.slice(1)}
                     />
                 ))}
             </div>
 
+            {/* --- BOTONES --- */}
             <div className="flex gap-3">
                 <Button
                     type="submit"
                     variant="contained"
                     sx={{
-                        backgroundColor: 'green',
-                        color: 'white',
-                        '&:hover': { backgroundColor: 'darkgreen' },
+                        backgroundColor: "green",
+                        color: "white",
+                        "&:hover": { backgroundColor: "darkgreen" },
                     }}
                 >
                     {editingProduct ? "Actualizar" : "Guardar"}
@@ -323,9 +343,13 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                         type="button"
                         variant="outlined"
                         sx={{
-                            color: 'darkred',
-                            borderColor: 'darkred',
-                            '&:hover': { backgroundColor: 'darkred', color: 'white', borderColor: 'darkred' },
+                            color: "darkred",
+                            borderColor: "darkred",
+                            "&:hover": {
+                                backgroundColor: "darkred",
+                                color: "white",
+                                borderColor: "darkred",
+                            },
                         }}
                         onClick={handleCancel}
                     >
@@ -334,21 +358,11 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                 )}
             </div>
 
-
-            {showCategories && (
-                <CategoryModal
-                    categories={categories}
-                    selectedCategories={form.categories}
-                    onSave={(selected) => setForm({ ...form, categories: selected })}
-                    onClose={() => setShowCategories(false)}
-                />
-            )}
-
             {showImageModal && (
                 <ImageEditModal
                     initialUrl={showImageModal.url}
                     onSave={(newUrl) => {
-                        setForm(prev => {
+                        setForm((prev) => {
                             let updatedImages = [...prev.images];
                             if (showImageModal.index !== null) {
                                 updatedImages[showImageModal.index] = newUrl;
