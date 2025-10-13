@@ -81,6 +81,9 @@ export default function ProductsScreen() {
   const handleDeleteBrand = (id) => dispatch(deleteBrand(id));
   const handleReactivateBrand = (id) => dispatch(reactivateBrand(id))
 
+    console.log("los poroductos son", items);
+
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
