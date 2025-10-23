@@ -7,7 +7,9 @@ export const getProducts = createAsyncThunk("abm/getAll", async () => {
 });
 
 export const editProduct = createAsyncThunk("abm/updateProduct", async (product) => {
+  console.log('Editando producto:', product);
   const res = await api.updateProduct(product);
+  console.log('RTA:', res.data);
   return res.data;
 })
 

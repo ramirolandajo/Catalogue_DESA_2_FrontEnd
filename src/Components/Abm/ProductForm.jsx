@@ -65,7 +65,10 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     }
                 });
             }
-            console.log(editingProduct)
+            console.log('Brands disponibles:', brands);
+            console.log('Brand del producto:', editingProduct.brand);
+            const selectedBrand = brands.find(b => b.brandCode === editingProduct.brand);
+            console.log('Brand seleccionado:', selectedBrand);
             setForm({
                 productCode: editingProduct.productCode || "",
                 name: editingProduct.name || "",
@@ -79,8 +82,8 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                         : "",
                 stock: editingProduct.stock || "",
                 calification: editingProduct.calification || 0,
-                categories: editingProduct.categories || [],
-                brand: editingProduct.brand || null,
+                categories: editingProduct.categories ? editingProduct.categories.map(id => categories.find(c => c.id === id)).filter(Boolean) : [],
+                brand: selectedBrand || null,
                 images: normalizedImages,
                 hero: editingProduct.hero || false,
                 active: editingProduct.active ?? true,
@@ -91,7 +94,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
         } else {
             setForm(initialFormState);
         }
-    }, [editingProduct]);
+    }, [editingProduct, categories, brands]);
 
     // 🔹 Recalcula el precio con descuento según el porcentaje
     useEffect(() => {
@@ -112,18 +115,15 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        onSave({
+        const productData = {
             productCode: parseInt(form.productCode),
             name: form.name,
             description: form.description,
             unitPrice: parseFloat(form.unitPrice),
-            price: parseFloat(form.price),
             discount: parseFloat(form.discount) / 100,
             stock: parseInt(form.stock),
             categoryCodes: form.categories.map((c) => c.id),
-            categories: form.categories.map((c) => c.id),
-            brandCode: form.brand.id,
-            brand: form.brand.id,
+            brandCode: form.brand.brandCode,
             calification: parseFloat(form.calification),
             images: form.images,
             new: form.new,
@@ -131,7 +131,9 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             featured: form.featured,
             hero: form.hero,
             active: form.active,
-        });
+        };
+        console.log('JSON enviado al crear/editar producto:', productData);
+        onSave(productData);
 
         setForm(initialFormState);
     };
@@ -286,17 +288,17 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     labelId="brand-label"
                     label="Marca"
                     name="brand"
-                    value={form.brand?.id || ""}
+                    value={form.brand?.brandCode || ""}
                     onChange={(e) => {
-                        const brandId = parseInt(e.target.value);
-                        const selectedBrand = brands.find((b) => b.id === brandId);
+                        const brandCode = parseInt(e.target.value);
+                        const selectedBrand = brands.find((b) => b.brandCode === brandCode);
                         setForm((prev) => ({ ...prev, brand: selectedBrand }));
                     }}
                     required
                 >
                     <MenuItem value="">Seleccionar marca</MenuItem>
                     {brands.map((b) => (
-                        <MenuItem key={b.id} value={b.id}>
+                        <MenuItem key={b.brandCode} value={b.brandCode}>
                             {b.name}
                         </MenuItem>
                     ))}
