@@ -1,71 +1,108 @@
-import { describe, it, vi, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import ProductFilters from "../Components/Abm/ProductFilters";
-import * as reactRedux from "react-redux";
-import * as abmSlice from "../../Store/abm/abmSlice";
+import "@testing-library/jest-dom";
+
+// Mock completo del módulo react-redux
+vi.mock("react-redux", () => ({
+  useDispatch: vi.fn(),
+  useSelector: vi.fn(),
+}));
+
+// Mock de los thunks
+vi.mock("../../Store/abm/abmSlice", () => ({
+  getBrands: vi.fn(),
+  getCategories: vi.fn(),
+}));
+
+import { useDispatch, useSelector } from "react-redux";
+import { getBrands, getCategories } from "../Store/abm/abmSlice";
 
 describe("ProductFilters", () => {
   const mockDispatch = vi.fn();
   const mockOnFilter = vi.fn();
 
+  const mockCategories = [
+    { id: 1, name: "Electrónica" },
+    { id: 2, name: "Hogar" },
+  ];
+
+  const mockBrands = [
+    { id: 10, name: "Marca A" },
+    { id: 20, name: "Marca B" },
+  ];
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
-    vi.spyOn(reactRedux, "useSelector").mockImplementation((selectorFn) =>
-      selectorFn({
+    useDispatch.mockReturnValue(mockDispatch);
+    useSelector.mockImplementation((selector) => {
+      // devolvemos el estado como lo espera el componente
+      return selector({
         abm: {
-          categories: [
-            { id: 1, name: "Cat 1" },
-            { id: 2, name: "Cat 2" },
-          ],
-          brands: [
-            { id: 1, name: "Brand 1" },
-            { id: 2, name: "Brand 2" },
-          ],
+          categories: mockCategories,
+          brands: mockBrands,
         },
-      })
-    );
+      });
+    });
   });
 
-  it("renderiza inputs y selects correctamente", () => {
+  it("renderiza correctamente los inputs y selects", () => {
     render(<ProductFilters onFilter={mockOnFilter} />);
 
+    // Inputs base
     expect(screen.getByPlaceholderText("Buscar producto...")).toBeInTheDocument();
     expect(screen.getByText("Todas las categorías")).toBeInTheDocument();
     expect(screen.getByText("Todas las marcas")).toBeInTheDocument();
-    expect(screen.getByText("Cat 1")).toBeInTheDocument();
-    expect(screen.getByText("Brand 1")).toBeInTheDocument();
+
+    // Opciones renderizadas
+    expect(screen.getByText("Electrónica")).toBeInTheDocument();
+    expect(screen.getByText("Hogar")).toBeInTheDocument();
+    expect(screen.getByText("Marca A")).toBeInTheDocument();
+    expect(screen.getByText("Marca B")).toBeInTheDocument();
   });
 
   it("llama a onFilter al cambiar el texto de búsqueda", () => {
     render(<ProductFilters onFilter={mockOnFilter} />);
-    const input = screen.getByPlaceholderText("Buscar producto...");
 
-    fireEvent.change(input, { target: { value: "test" } });
+    const searchInput = screen.getByPlaceholderText("Buscar producto...");
+    fireEvent.change(searchInput, { target: { value: "Laptop" } });
+
     expect(mockOnFilter).toHaveBeenCalledWith({
-      searchText: "test",
+      searchText: "Laptop",
       categoryId: null,
       brandId: null,
     });
   });
 
-  it("llama a onFilter al cambiar categoría y marca", () => {
+  it("llama a onFilter al cambiar la categoría", () => {
     render(<ProductFilters onFilter={mockOnFilter} />);
-    const categorySelect = screen.getByText("Todas las categorías").parentElement;
-    const brandSelect = screen.getByText("Todas las marcas").parentElement;
 
-    fireEvent.change(categorySelect, { target: { value: "1" } });
+    const selectCategory = screen.getByDisplayValue("Todas las categorías");
+    fireEvent.change(selectCategory, { target: { value: "2" } });
+
     expect(mockOnFilter).toHaveBeenCalledWith({
       searchText: "",
-      categoryId: 1,
+      categoryId: 2,
       brandId: null,
     });
+  });
 
-    fireEvent.change(brandSelect, { target: { value: "2" } });
+  it("llama a onFilter al cambiar la marca", () => {
+    render(<ProductFilters onFilter={mockOnFilter} />);
+
+    const selectBrand = screen.getByDisplayValue("Todas las marcas");
+    fireEvent.change(selectBrand, { target: { value: "10" } });
+
     expect(mockOnFilter).toHaveBeenCalledWith({
       searchText: "",
-      categoryId: 1,
-      brandId: 2,
+      categoryId: null,
+      brandId: 10,
     });
+  });
+
+  it("despacha getCategories y getBrands al montar", () => {
+    render(<ProductFilters onFilter={mockOnFilter} />);
+    expect(mockDispatch).toHaveBeenCalledWith(getCategories());
+    expect(mockDispatch).toHaveBeenCalledWith(getBrands());
   });
 });
