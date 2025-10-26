@@ -1,84 +1,156 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import CategoryManagementModal from "../Components/Abm/CategoryManagementModal";
+import "@testing-library/jest-dom";
 
 describe("CategoryManagementModal", () => {
-  it("muestra el título de gestión de categorías", () => {
-    render(
-      <CategoryManagementModal
-        categories={[]}
-        onAddCategory={() => {}}
-        onDeleteCategory={() => {}}
-        onClose={() => {}}
-      />
-    );
-    expect(screen.getByText("Gestión de Categorías")).toBeInTheDocument();
+  let mockAddCategory;
+  let mockDeleteCategory;
+  let mockActivateCategory;
+  let mockClose;
+
+  beforeEach(() => {
+    mockAddCategory = vi.fn();
+    mockDeleteCategory = vi.fn();
+    mockActivateCategory = vi.fn();
+    mockClose = vi.fn();
   });
 
-  it("muestra mensaje cuando no hay categorías", () => {
+  const mockCategories = [
+    { id: 1, categoryCode: "CAT01", name: "Categoría A", active: true },
+    { id: 2, categoryCode: "CAT02", name: "Categoría B", active: false },
+  ];
+
+  it("se renderiza correctamente con las categorías dadas", () => {
     render(
       <CategoryManagementModal
-        categories={[]}
-        onAddCategory={() => {}}
-        onDeleteCategory={() => {}}
-        onClose={() => {}}
-      />
-    );
-    expect(screen.getByText("No hay categorías cargadas.")).toBeInTheDocument();
-  });
-
-  it("llama a onAddCategory cuando se agrega una categoría", () => {
-    const mockAdd = vi.fn();
-    render(
-      <CategoryManagementModal
-        categories={[]}
-        onAddCategory={mockAdd}
-        onDeleteCategory={() => {}}
-        onClose={() => {}}
-      />
-    );
-
-    const input = screen.getByLabelText("Nueva categoría");
-    fireEvent.change(input, { target: { value: "Electrónica" } });
-
-    const addButton = screen.getByText("Agregar");
-    fireEvent.click(addButton);
-
-    expect(mockAdd).toHaveBeenCalledWith("Electrónica");
-  });
-
-  it("llama a onDeleteCategory cuando se hace click en eliminar", () => {
-    const mockDelete = vi.fn();
-    const categories = [{ id: 1, name: "Hogar", active: true }];
-    render(
-      <CategoryManagementModal
-        categories={categories}
-        onAddCategory={() => {}}
-        onDeleteCategory={mockDelete}
-        onClose={() => {}}
-      />
-    );
-
-    const deleteButton = screen.getByText("Eliminar");
-    fireEvent.click(deleteButton);
-
-    expect(mockDelete).toHaveBeenCalledWith(1);
-  });
-
-  it("llama a onClose cuando se hace click en cerrar", () => {
-    const mockClose = vi.fn();
-    render(
-      <CategoryManagementModal
-        categories={[]}
-        onAddCategory={() => {}}
-        onDeleteCategory={() => {}}
+        categories={mockCategories}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
         onClose={mockClose}
       />
     );
 
-    const closeButton = screen.getByText("Cerrar");
-    fireEvent.click(closeButton);
+    expect(screen.getByText("Gestión de Categorías")).toBeInTheDocument();
+    expect(screen.getByText("CAT01: Categoría A")).toBeInTheDocument();
+    expect(screen.getByText("CAT02: Categoría B")).toBeInTheDocument();
+  });
 
+  it("muestra mensaje si no hay categorías cargadas", () => {
+    render(
+      <CategoryManagementModal
+        categories={[]}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
+        onClose={mockClose}
+      />
+    );
+
+    expect(
+      screen.getByText("No hay categorías cargadas.")
+    ).toBeInTheDocument();
+  });
+
+  it("llama a onAddCategory con los datos correctos al agregar una categoría válida", () => {
+    render(
+      <CategoryManagementModal
+        categories={mockCategories}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
+        onClose={mockClose}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText("Código"), {
+      target: { value: "123" },
+    });
+    fireEvent.change(screen.getByLabelText("Nombre de categoría"), {
+      target: { value: "Nueva Categoría" },
+    });
+
+    fireEvent.click(screen.getByText("Agregar"));
+
+    expect(mockAddCategory).toHaveBeenCalledWith({
+      categoryCode: "123",
+      name: "Nueva Categoría",
+      active: true,
+    });
+  });
+
+  it("muestra alerta si se intenta agregar sin completar los campos", () => {
+    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+    render(
+      <CategoryManagementModal
+        categories={mockCategories}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
+        onClose={mockClose}
+      />
+    );
+
+    fireEvent.click(screen.getByText("Agregar"));
+    expect(alertSpy).toHaveBeenCalledWith(
+      "Por favor, completa tanto el ID como el nombre de la categoría."
+    );
+    alertSpy.mockRestore();
+  });
+
+  it("llama a onDeleteCategory cuando el usuario confirma la desactivación", () => {
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+    render(
+      <CategoryManagementModal
+        categories={mockCategories}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
+        onClose={mockClose}
+      />
+    );
+
+    fireEvent.click(screen.getByText("Desactivar"));
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(mockDeleteCategory).toHaveBeenCalledWith(1);
+
+    confirmSpy.mockRestore();
+  });
+
+  it("llama a onActivateCategory cuando el usuario confirma la activación", () => {
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+
+    render(
+      <CategoryManagementModal
+        categories={mockCategories}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
+        onClose={mockClose}
+      />
+    );
+
+    fireEvent.click(screen.getByText("Activar"));
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(mockActivateCategory).toHaveBeenCalledWith(2);
+
+    confirmSpy.mockRestore();
+  });
+
+  it("llama a onClose al hacer clic en el botón 'Cerrar'", () => {
+    render(
+      <CategoryManagementModal
+        categories={mockCategories}
+        onAddCategory={mockAddCategory}
+        onDeleteCategory={mockDeleteCategory}
+        onActivateCategory={mockActivateCategory}
+        onClose={mockClose}
+      />
+    );
+
+    fireEvent.click(screen.getByText("Cerrar"));
     expect(mockClose).toHaveBeenCalled();
   });
 });

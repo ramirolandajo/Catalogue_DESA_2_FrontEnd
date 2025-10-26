@@ -1,50 +1,92 @@
-// CategoryModal.test.jsx
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import CategoryModal from "../Components/Abm/CategoryModal";
+import "@testing-library/jest-dom";
 
 describe("CategoryModal", () => {
-  const categories = [
+  let mockOnChange;
+
+  const mockCategories = [
     { id: 1, name: "Electrónica" },
-    { id: 2, name: "Ropa" },
+    { id: 2, name: "Hogar" },
+    { id: 3, name: "Deportes" },
   ];
 
-  it("abre el modal al hacer click en el botón", () => {
-    render(<CategoryModal categories={categories} selected={[]} onChange={() => {}} />);
+  beforeEach(() => {
+    mockOnChange = vi.fn();
+  });
 
-    // Modal NO debería estar visible al inicio
-    expect(screen.queryByText("Seleccionar Categorías")).not.toBeInTheDocument();
+  it("renderiza el botón principal correctamente", () => {
+    render(
+      <CategoryModal categories={mockCategories} selected={[]} onChange={mockOnChange} />
+    );
 
-    // Click en botón
-    fireEvent.click(screen.getByRole("button", { name: /Seleccionar categorías/i }));
+    expect(screen.getByText("Seleccionar categorías")).toBeInTheDocument();
+  });
 
-    // Modal debería aparecer
+  it("abre el modal al hacer clic en 'Seleccionar categorías'", () => {
+    render(
+      <CategoryModal categories={mockCategories} selected={[]} onChange={mockOnChange} />
+    );
+
+    fireEvent.click(screen.getByText("Seleccionar categorías"));
+
     expect(screen.getByText("Seleccionar Categorías")).toBeInTheDocument();
+    expect(screen.getByText("Electrónica")).toBeInTheDocument();
+    expect(screen.getByText("Hogar")).toBeInTheDocument();
   });
 
-  it("marca y desmarca categorías llamando a onChange", () => {
-    const handleChange = vi.fn();
-    render(<CategoryModal categories={categories} selected={[]} onChange={handleChange} />);
+  it("muestra las categorías seleccionadas en el texto resumen", () => {
+    const selected = [{ id: 1, name: "Electrónica" }, { id: 3, name: "Deportes" }];
 
-    fireEvent.click(screen.getByRole("button", { name: /Seleccionar categorías/i }));
+    render(
+      <CategoryModal
+        categories={mockCategories}
+        selected={selected}
+        onChange={mockOnChange}
+      />
+    );
 
-    // Click en checkbox de Electrónica
-    fireEvent.click(screen.getByLabelText("Electrónica"));
-    expect(handleChange).toHaveBeenCalledWith([{ id: 1, name: "Electrónica" }]);
-
-    // Click otra vez para desmarcar
-    fireEvent.click(screen.getByLabelText("Electrónica"));
-    expect(handleChange).toHaveBeenCalledWith([]);
+    expect(screen.getByText("Electrónica, Deportes")).toBeInTheDocument();
   });
 
-  it("cierra el modal al hacer click en Cerrar", () => {
-    render(<CategoryModal categories={categories} selected={[]} onChange={() => {}} />);
+  it("llama a onChange al seleccionar una categoría nueva", () => {
+    render(
+      <CategoryModal categories={mockCategories} selected={[]} onChange={mockOnChange} />
+    );
 
-    fireEvent.click(screen.getByRole("button", { name: /Seleccionar categorías/i }));
+    fireEvent.click(screen.getByText("Seleccionar categorías"));
+    fireEvent.click(screen.getByLabelText("Electrónica"));
 
-    fireEvent.click(screen.getByRole("button", { name: /Cerrar/i }));
+    expect(mockOnChange).toHaveBeenCalledWith([{ id: 1, name: "Electrónica" }]);
+  });
 
-    // Modal ya no debería estar
+  it("llama a onChange al deseleccionar una categoría ya seleccionada", () => {
+    const selected = [{ id: 2, name: "Hogar" }];
+
+    render(
+      <CategoryModal
+        categories={mockCategories}
+        selected={selected}
+        onChange={mockOnChange}
+      />
+    );
+
+    fireEvent.click(screen.getByText("Seleccionar categorías"));
+    fireEvent.click(screen.getByLabelText("Hogar"));
+
+    expect(mockOnChange).toHaveBeenCalledWith([]);
+  });
+
+  it("cierra el modal al hacer clic en 'Cerrar'", () => {
+    render(
+      <CategoryModal categories={mockCategories} selected={[]} onChange={mockOnChange} />
+    );
+
+    fireEvent.click(screen.getByText("Seleccionar categorías"));
+    const closeButton = screen.getByText("Cerrar");
+    fireEvent.click(closeButton);
+
     expect(screen.queryByText("Seleccionar Categorías")).not.toBeInTheDocument();
   });
 });
