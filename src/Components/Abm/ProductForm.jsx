@@ -67,7 +67,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             }
             console.log('Brands disponibles:', brands);
             console.log('Brand del producto:', editingProduct.brand);
-            const selectedBrand = brands.find(b => b.brandCode === editingProduct.brand);
+            const selectedBrand = brands.find(b => b.brandCode === editingProduct.brand.brandCode);
             console.log('Brand seleccionado:', selectedBrand);
             setForm({
                 productCode: editingProduct.productCode || "",
