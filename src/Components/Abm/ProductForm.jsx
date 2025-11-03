@@ -69,6 +69,8 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             console.log('Brand del producto:', editingProduct.brand);
             const selectedBrand = brands.find(b => b.brandCode === editingProduct.brand.brandCode);
             console.log('Brand seleccionado:', selectedBrand);
+            console.log("Categories disponibles:", categories);
+            console.log("Categories seleccionadas", editingProduct.categories);
             setForm({
                 productCode: editingProduct.productCode || "",
                 name: editingProduct.name || "",
@@ -82,7 +84,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                         : "",
                 stock: editingProduct.stock || "",
                 calification: editingProduct.calification || 0,
-                categories: editingProduct.categories ? editingProduct.categories.map(id => categories.find(c => c.id === id)).filter(Boolean) : [],
+                categories: editingProduct.categories ? editingProduct.categories.map(cat => categories.find(c => c.id === cat.id)).filter(Boolean) : [],
                 brand: selectedBrand || null,
                 images: normalizedImages,
                 hero: editingProduct.hero || false,
