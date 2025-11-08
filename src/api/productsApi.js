@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || '/api';
 // Crear instancia de Axios con autenticación básica
 const api = axios.create({
   baseURL: API_URL,
-  //baseURL: "http://localhost:4002/api"
+  //baseURL: "/api"
 });
 
 // Funciones usando la instancia
@@ -38,4 +38,4 @@ export const reactivateCategory = (id) => api.patch(`/category/activateByCode/${
 export const fetchBrands = () => api.get('/brand/getAll');
 export const createBrand = (brand) => api.post('/brand/create', brand);
 export const deleteBrand = (id) => api.delete(`/brand/delete/${id}`);
-export const reactivateBrand = (id) => api.patch(`/category/activateByCode/${id}`)
+export const reactivateBrand = (id) => api.patch(`/brand/activateByCode/${id}`)

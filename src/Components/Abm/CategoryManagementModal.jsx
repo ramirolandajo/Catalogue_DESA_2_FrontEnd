@@ -92,7 +92,7 @@ export default function CategoryManagementModal({
                         borderColor: "darkred",
                       },
                     }}
-                    onClick={() => handleDelete(cat.id)}
+                    onClick={() => handleDelete(cat.categoryCode)}
                   >
                     Desactivar
                   </Button>
@@ -109,7 +109,7 @@ export default function CategoryManagementModal({
                         borderColor: "green",
                       },
                     }}
-                    onClick={() => handleActivate(cat.id)}
+                    onClick={() => handleActivate(cat.categoryCode)}
                   >
                     Activar
                   </Button>

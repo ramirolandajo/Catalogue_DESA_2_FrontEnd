@@ -124,7 +124,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             unitPrice: parseFloat(form.unitPrice),
             discount: parseFloat(form.discount) / 100,
             stock: parseInt(form.stock),
-            categoryCodes: form.categories.map((c) => c.id),
+            categoryCodes: form.categories.map((c) => c.categoryCode),
             brandCode: form.brand.brandCode,
             calification: parseFloat(form.calification),
             images: form.images,
