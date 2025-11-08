@@ -116,13 +116,14 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const parseDiscount = parseFloat(form.discount) / 100
 
         const productData = {
             productCode: parseInt(form.productCode),
             name: form.name,
             description: form.description,
             unitPrice: parseFloat(form.unitPrice),
-            discount: parseFloat(form.discount) / 100,
+            discount: isNaN(parseDiscount) ? 0 : parseDiscount,
             stock: parseInt(form.stock),
             categoryCodes: form.categories.map((c) => c.categoryCode),
             brandCode: form.brand.brandCode,
