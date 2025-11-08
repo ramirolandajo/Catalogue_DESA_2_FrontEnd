@@ -91,7 +91,7 @@ export default function BrandManagementModal({
                         borderColor: "darkred",
                       },
                     }}
-                    onClick={() => handleDelete(brand.id)}
+                    onClick={() => handleDelete(brand.brandCode)}
                   >
                     Desactivar
                   </Button>
@@ -108,7 +108,7 @@ export default function BrandManagementModal({
                         borderColor: "green",
                       },
                     }}
-                    onClick={() => handleActivate(brand.id)}
+                    onClick={() => handleActivate(brand.brandCode)}
                   >
                     Activar
                   </Button>

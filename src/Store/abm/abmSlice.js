@@ -134,7 +134,7 @@ const abmSlice = createSlice({
       .addCase(deleteCategory.fulfilled, (state, action) => {
         const categoryCode = action.payload;
         const index = state.categories.findIndex(
-          (c) => c.id === categoryCode
+          (c) => c.categoryCode === categoryCode
         )
         if (index !== 1) {
           state.categories[index].active = false;
@@ -143,7 +143,7 @@ const abmSlice = createSlice({
       .addCase(reactivateCategory.fulfilled, (state, action) => {
         const categoryCode = action.payload;
         const index = state.categories.findIndex(
-          (c) => c.id === categoryCode
+          (c) => c.categoryCode === categoryCode
         )
         if (index !== 1) {
           state.categories[index].active = true;
@@ -155,7 +155,7 @@ const abmSlice = createSlice({
       .addCase(deleteBrand.fulfilled, (state, action) => {
         const brandCode = action.payload;
         const index = state.brands.findIndex(
-          (b) => b.id === brandCode
+          (b) => b.brandCode === brandCode
         )
         if (index !== 1) {
           state.brands[index].active = false;
@@ -164,7 +164,7 @@ const abmSlice = createSlice({
       .addCase(reactivateBrand.fulfilled, (state, action) => {
         const brandCode = action.payload;
         const index = state.brands.findIndex(
-          (b) => b.id === brandCode
+          (b) => b.brandCode === brandCode
         )
         if (index !== 1) {
           state.brands[index].active = true;
