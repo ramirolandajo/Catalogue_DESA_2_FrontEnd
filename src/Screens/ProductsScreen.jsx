@@ -17,6 +17,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../Components/Layout/Sidebar.jsx";
 import CategoryManagementModal from "../Components/Abm/CategoryManagementModal.jsx";
 import BrandManagementModal from "../Components/Abm/BrandManagementModal.jsx";
+import Toast from "../Components/Layout/Toast.jsx"
+
 
 export default function ProductsScreen() {
   const dispatch = useDispatch();
@@ -107,6 +109,7 @@ export default function ProductsScreen() {
           }}
         />
       </div>
+      <Toast />
 
       {/* Modales */}
       {showCategoryModal && (
