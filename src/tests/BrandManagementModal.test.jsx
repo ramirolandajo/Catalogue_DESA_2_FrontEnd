@@ -79,7 +79,7 @@ describe("BrandManagementModal", () => {
   });
 
   it("muestra alerta si se intenta agregar una marca sin completar campos", () => {
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => { });
     render(
       <BrandManagementModal
         brands={mockBrands}
@@ -98,9 +98,7 @@ describe("BrandManagementModal", () => {
   });
 
   it("llama a onDeleteBrand cuando el usuario confirma la desactivación", async () => {
-    const confirmSpy = vi
-      .spyOn(window, "confirm")
-      .mockImplementation(() => true);
+    const confirmSpy = vi.spyOn(window, "confirm").mockImplementation(() => true);
 
     render(
       <BrandManagementModal
@@ -114,15 +112,14 @@ describe("BrandManagementModal", () => {
 
     fireEvent.click(screen.getByText("Desactivar"));
     expect(confirmSpy).toHaveBeenCalled();
-    expect(mockDeleteBrand).toHaveBeenCalledWith(1);
+    // ⬇️ Ajuste aquí
+    expect(mockDeleteBrand).toHaveBeenCalledWith("ABC");
 
     confirmSpy.mockRestore();
   });
 
   it("llama a onActivateBrand cuando el usuario confirma la activación", async () => {
-    const confirmSpy = vi
-      .spyOn(window, "confirm")
-      .mockImplementation(() => true);
+    const confirmSpy = vi.spyOn(window, "confirm").mockImplementation(() => true);
 
     render(
       <BrandManagementModal
@@ -136,10 +133,12 @@ describe("BrandManagementModal", () => {
 
     fireEvent.click(screen.getByText("Activar"));
     expect(confirmSpy).toHaveBeenCalled();
-    expect(mockActivateBrand).toHaveBeenCalledWith(2);
+    // ⬇️ Ajuste aquí también
+    expect(mockActivateBrand).toHaveBeenCalledWith("XYZ");
 
     confirmSpy.mockRestore();
   });
+
 
   it("llama a onClose al hacer clic en el botón 'Cerrar'", () => {
     render(

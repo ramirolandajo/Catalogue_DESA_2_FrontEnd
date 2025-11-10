@@ -37,13 +37,17 @@ vi.mock("../Components/Abm/ProductList.jsx", () => ({
         <div key={p.id}>
           <span>{p.name}</span>
           <button onClick={() => onEdit(p)}>Editar</button>
-          <button onClick={() => onDelete(p.productCode)}>Desactivar</button>
-          <button onClick={() => onActivate(p.productCode)}>Activar</button>
+          {p.active ? (
+            <button onClick={() => onDelete(p.productCode)}>Desactivar</button>
+          ) : (
+            <button onClick={() => onActivate(p.productCode)}>Activar</button>
+          )}
         </div>
       ))}
     </div>
   ),
 }));
+
 
 describe("ProductListPage Component", () => {
   beforeEach(() => {

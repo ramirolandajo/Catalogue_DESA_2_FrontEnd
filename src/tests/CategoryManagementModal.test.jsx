@@ -81,7 +81,7 @@ describe("CategoryManagementModal", () => {
   });
 
   it("muestra alerta si se intenta agregar sin completar los campos", () => {
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => { });
     render(
       <CategoryManagementModal
         categories={mockCategories}
@@ -114,7 +114,8 @@ describe("CategoryManagementModal", () => {
 
     fireEvent.click(screen.getByText("Desactivar"));
     expect(confirmSpy).toHaveBeenCalled();
-    expect(mockDeleteCategory).toHaveBeenCalledWith(1);
+    // ⬇️ Cambiamos el 1 por el código de la categoría
+    expect(mockDeleteCategory).toHaveBeenCalledWith("CAT01");
 
     confirmSpy.mockRestore();
   });
@@ -134,10 +135,12 @@ describe("CategoryManagementModal", () => {
 
     fireEvent.click(screen.getByText("Activar"));
     expect(confirmSpy).toHaveBeenCalled();
-    expect(mockActivateCategory).toHaveBeenCalledWith(2);
+    // ⬇️ Cambiamos el 2 por el código correspondiente
+    expect(mockActivateCategory).toHaveBeenCalledWith("CAT02");
 
     confirmSpy.mockRestore();
   });
+
 
   it("llama a onClose al hacer clic en el botón 'Cerrar'", () => {
     render(
