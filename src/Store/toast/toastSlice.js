@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createProduct, editProduct, createBrand, createCategory } from "../abm/abmSlice";
+import { createProduct, editProduct, createBrand, createCategory, uploadFile } from "../abm/abmSlice";
 
 const toastSlice = createSlice({
     name: "toast",
@@ -62,7 +62,15 @@ const toastSlice = createSlice({
             .addCase(createBrand.rejected, (state, action) => {
                 state.type = "error";
                 state.message = "Error al crear la marca.";
-            });
+            })
+            .addCase(uploadFile.fulfilled, (state, action) => {
+                state.type = "success";
+                state.message = "Productos cargados exitosamente."
+            })
+            .addCase(uploadFile.rejected, (state, action) => {
+                state.type = "error";
+                state.message = "Error al cargar productos."
+            })
     },
 });
 
