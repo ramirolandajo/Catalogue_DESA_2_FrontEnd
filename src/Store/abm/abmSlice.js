@@ -7,9 +7,9 @@ export const getProducts = createAsyncThunk("abm/getAll", async () => {
 });
 
 export const editProduct = createAsyncThunk("abm/updateProduct", async (product) => {
-  console.log('Editando producto:', product);
+  ('Editando producto:', product);
   const res = await api.updateProduct(product);
-  console.log('RTA:', res.data);
+  ('RTA:', res.data);
   return res.data;
 })
 
@@ -41,44 +41,44 @@ export const reactivateProduct = createAsyncThunk("abm/reactivateProduct", async
 
 export const uploadFile = createAsyncThunk("abm/uploadFile", async (file) => {
   const res = await api.uploadBatch(file);
-  console.log(res);
+  (res);
   return res.data;
 })
 
 export const createCategory = createAsyncThunk("abm/createCategory", async (category) => {
   const res = await api.createCategory(category);
-  console.log('Categoria creada! RTA:', res.data);
+  ('Categoria creada! RTA:', res.data);
   return res.data;
 })
 
 export const deleteCategory = createAsyncThunk("abm/deleteCategory", async (id) => {
   const res = await api.deleteCategory(id);
-  console.log('Categoria eliminada! RTA:', res.data);
+  ('Categoria eliminada! RTA:', res.data);
   return id;
 })
 
 export const reactivateCategory = createAsyncThunk("abm/reactivateCategory", async (id) => {
   const res = await api.reactivateCategory(id);
-  console.log('Categoria reactivada! RTA:', res.data);
+  ('Categoria reactivada! RTA:', res.data);
   return id;
 })
 
 
 export const createBrand = createAsyncThunk("abm/createBrand", async (brand) => {
   const res = await api.createBrand(brand);
-  console.log('Marca creada! RTA:', res.data);
+  ('Marca creada! RTA:', res.data);
   return res.data;
 })
 
 export const deleteBrand = createAsyncThunk("abm/deleteBrand", async (id) => {
   const res = await api.deleteBrand(id);
-  console.log('Marca eliminada! RTA:', res.data);
+  ('Marca eliminada! RTA:', res.data);
   return id;
 })
 
 export const reactivateBrand = createAsyncThunk("abm/reactivateBrand", async (id) => {
   const res = await api.reactivateBrand(id);
-  console.log('Marca reactivada! RTA:', res.data);
+  ('Marca reactivada! RTA:', res.data);
   return id;
 })
 

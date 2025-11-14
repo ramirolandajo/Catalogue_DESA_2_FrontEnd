@@ -65,12 +65,12 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     }
                 });
             }
-            console.log('Brands disponibles:', brands);
-            console.log('Brand del producto:', editingProduct.brand);
+            ('Brands disponibles:', brands);
+            ('Brand del producto:', editingProduct.brand);
             const selectedBrand = brands.find(b => b.brandCode === editingProduct.brand.brandCode);
-            console.log('Brand seleccionado:', selectedBrand);
-            console.log("Categories disponibles:", categories);
-            console.log("Categories seleccionadas", editingProduct.categories);
+            ('Brand seleccionado:', selectedBrand);
+            ("Categories disponibles:", categories);
+            ("Categories seleccionadas", editingProduct.categories);
             setForm({
                 productCode: editingProduct.productCode || "",
                 name: editingProduct.name || "",
@@ -135,7 +135,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             hero: form.hero,
             active: form.active,
         };
-        console.log('JSON enviado al crear/editar producto:', productData);
+        ('JSON enviado al crear/editar producto:', productData);
         onSave(productData);
 
         setForm(initialFormState);

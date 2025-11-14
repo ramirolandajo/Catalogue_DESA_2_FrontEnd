@@ -23,7 +23,7 @@ const toastSlice = createSlice({
             .addCase(createProduct.fulfilled, (state, action) => {
                 state.type = "success";
                 state.message = "Producto creado exitosamente.";
-                console.log("Estado modificado!")
+                ("Estado modificado!")
                 
             })
             .addCase(createProduct.rejected, (state, action) => {
@@ -35,7 +35,7 @@ const toastSlice = createSlice({
             .addCase(editProduct.fulfilled, (state, action) => {
                 state.type = "success";
                 state.message = "Producto actualizado exitosamente.";
-                console.log("Estado modificado!")
+                ("Estado modificado!")
             })
             .addCase(editProduct.rejected, (state, action) => {
                 state.type = "error";
@@ -46,7 +46,7 @@ const toastSlice = createSlice({
             .addCase(createCategory.fulfilled, (state, action) => {
                 state.type = "success";
                 state.message = "Categoría creada exitosamente.";
-                console.log("Estado modificado!")
+                ("Estado modificado!")
             })
             .addCase(createCategory.rejected, (state, action) => {
                 state.type = "error";
@@ -57,7 +57,7 @@ const toastSlice = createSlice({
             .addCase(createBrand.fulfilled, (state, action) => {
                 state.type = "success";
                 state.message = "Marca creada exitosamente.";
-                console.log("Estado modificado!")
+                ("Estado modificado!")
             })
             .addCase(createBrand.rejected, (state, action) => {
                 state.type = "error";
