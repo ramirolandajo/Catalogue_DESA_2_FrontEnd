@@ -1,16 +1,27 @@
 import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../Store/abm/abmSlice";
-import { Button, Typography } from "@mui/material";
-import ExcelIcon from "../../assets/excel-icon.png"
+import { Button, Typography, CircularProgress } from "@mui/material";
+import ExcelIcon from "../../assets/excel-icon.png";
+
 export default function CsvUploadButton() {
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState(null);
+  const [loadingFile, setLoadingFile] = useState(false); // 👈 Nuevo estado
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selected = e.target.files[0];
+    if (!selected) return;
+
+    setLoadingFile(true);
+
+    // Simular un "tiempo de carga" mínimo para mostrar el spinner
+    setTimeout(() => {
+      setFile(selected);
+      setLoadingFile(false);
+    }, 800); // Puedes ajustarlo
   };
 
   const handleUpload = () => {
@@ -59,14 +70,18 @@ export default function CsvUploadButton() {
               style={{ display: 'none' }}
             />
 
+            {/* Loader mientras se carga el archivo */}
+            {loadingFile && (
+              <div className="flex justify-center items-center mb-4">
+                <CircularProgress size={28} />
+                <span className="ml-3 text-gray-700">Cargando archivo...</span>
+              </div>
+            )}
+
             {/* Preview del archivo seleccionado */}
-            {file && (
+            {!loadingFile && file && (
               <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-md mb-4">
-                <img
-                  src={ExcelIcon} // reemplaza con la ruta de tu ícono Excel
-                  alt="Excel"
-                  className="w-6 h-6"
-                />
+                <img src={ExcelIcon} alt="Excel" className="w-6 h-6" />
                 <span className="text-gray-800 font-medium truncate">{file.name}</span>
               </div>
             )}
@@ -83,6 +98,7 @@ export default function CsvUploadButton() {
                 variant="contained"
                 sx={{ backgroundColor: 'green', '&:hover': { backgroundColor: 'darkgreen' } }}
                 onClick={handleUpload}
+                disabled={loadingFile} // Evita subir mientras carga
               >
                 Subir
               </Button>
