@@ -12,8 +12,59 @@ const api = axios.create({
 // Funciones usando la instancia
 export const fetchProducts = () => api.get('/products/getAll');
 export const fetchProductByCode = (code) => api.get(`/products/getProductByCode/${code}`);
-export const createProduct = (product) => api.post('/products/create', product);
-export const updateProduct = (product) => api.patch(`/products/update`, product);
+export const createProduct = (product, images) => {
+  const formData = new FormData();
+
+  // 1. Agregar el JSON con el producto
+  formData.append(
+    "productDTO",
+    new Blob([JSON.stringify(product)], { type: "application/json" })
+  );
+
+  console.log("Estas son las imagenes", images);
+
+  // Asegurarse que images sea un array (si viene undefined -> [])
+  const imgs = Array.isArray(images) ? images : [];
+
+  // 2. Agregar todas las imágenes (si las hay)
+  imgs.forEach((img) => {
+    // img debe ser un File (o Blob). Si es undefined o null lo omitimos.
+    if (img) {
+      formData.append("images", img);
+    }
+  });
+
+  // NO establecer manualmente Content-Type. Axios lo configura y añade boundary.
+  return api.post("/products/create", formData);
+};
+
+// productsApi.js
+export const updateProduct = (product, images) => {
+  const formData = new FormData();
+
+  // 1. Agregar el JSON con el producto
+  formData.append(
+    "productDTO",
+    new Blob([JSON.stringify(product)], { type: "application/json" })
+  );
+
+  console.log("Estas son las imagenes", images);
+
+  // Asegurarse que images sea un array (si viene undefined -> [])
+  const imgs = Array.isArray(images) ? images : [];
+
+  // 2. Agregar todas las imágenes (si las hay)
+  imgs.forEach((img) => {
+    // img debe ser un File (o Blob). Si es undefined o null lo omitimos.
+    if (img) {
+      formData.append("images", img);
+    }
+  });
+
+  // NO establecer manualmente Content-Type. Axios lo configura y añade boundary.
+  return api.patch("/products/update", formData);
+};
+
 export const updateStock = (code, stock) => api.patch(`/products/updateStock/${code}`, { newStock: stock });
 export const updateUnitPrice = (code, unitPrice) => api.patch(`/products/updateUnitPrice/${code}`, { newPrice: unitPrice });
 export const updateDiscount = (code, discount) => api.patch(`/products/updateDiscount/${code}`, { newDiscount: discount });

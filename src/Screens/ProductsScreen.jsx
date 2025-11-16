@@ -40,14 +40,17 @@ export default function ProductsScreen() {
   }, [items]);
 
   // Handlers de productos
-  const handleSave = (product) => {
+  // ProductScreen.jsx
+  const handleSave = (product, files) => {
+    console.log("LLegó, files en ProductScreen:", files);
     if (editingProduct) {
-      dispatch(editProduct(product));
+      dispatch(editProduct({ product, files }));
       setEditingProduct(null);
     } else {
-      dispatch(createProduct(product));
+      dispatch(createProduct({ product, files })); // si createProduct fue definido de forma similar
     }
   };
+
   const handleDelete = (id) => dispatch(deleteProduct(id));
   const handleActivate = (id) => dispatch(reactivateProduct(id));
 

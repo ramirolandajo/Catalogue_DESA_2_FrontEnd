@@ -6,12 +6,16 @@ export const getProducts = createAsyncThunk("abm/getAll", async () => {
   return res.data;
 });
 
-export const editProduct = createAsyncThunk("abm/updateProduct", async (product) => {
-  ('Editando producto:', product);
-  const res = await api.updateProduct(product);
-  ('RTA:', res.data);
-  return res.data;
-})
+// abmSlice.js
+export const editProduct = createAsyncThunk(
+  "abm/updateProduct",
+  async ({ product, files }) => {
+    console.log("Editando producto:", files);
+    const res = await api.updateProduct(product, files);
+    console.log("RTA:", res.data);
+    return res.data;
+  }
+);
 
 export const getCategories = createAsyncThunk("abm/getAllCategories", async () => {
   const res = await api.fetchCategories();
@@ -28,16 +32,20 @@ export const deleteProduct = createAsyncThunk("abm/deleteProduct", async (produc
   return productCode;
 })
 
-export const createProduct = createAsyncThunk("abm/createProduct", async (product) => {
-  const res = await api.createProduct(product)
-  return res.data;
-})
+export const createProduct = createAsyncThunk(
+  "abm/createProduct",
+  async ({ product, files }) => {
+    console.log("Editando producto:", files);
+    const res = await api.createProduct(product, files);
+    console.log("RTA:", res.data);
+    return res.data;
+  }
+);
 
 export const reactivateProduct = createAsyncThunk("abm/reactivateProduct", async (productCode) => {
   const res = await api.reactivateProduct(productCode);
   return productCode;
 })
-
 
 export const uploadFile = createAsyncThunk("abm/uploadFile", async (file) => {
   const res = await api.uploadBatch(file);

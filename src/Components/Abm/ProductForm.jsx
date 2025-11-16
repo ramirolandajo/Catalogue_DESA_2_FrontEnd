@@ -42,6 +42,7 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
     const [form, setForm] = useState(initialFormState);
     const [showCategories, setShowCategories] = useState(false);
     const [showImageModal, setShowImageModal] = useState(false);
+    const [imageFiles, setImageFiles] = useState([]);
 
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.abm.categories);
@@ -144,21 +145,22 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
             categoryCodes: form.categories.map((c) => c.categoryCode),
             brandCode: form.brand.brandCode,
             calification: parseFloat(form.calification),
-            images: form.images,
+            images: form.images.filter(image => !image.startsWith("blob:")),
             new: form.new,
             bestSeller: form.bestSeller,
             featured: form.featured,
             hero: form.hero,
             active: form.active,
         };
-        ('JSON enviado al crear/editar producto:', productData);
-        onSave(productData);
-
+        console.log('JSON enviado al crear/editar producto:', productData, imageFiles);
+        onSave(productData, imageFiles);
+        setImageFiles([])
         setForm(initialFormState);
     };
 
     const handleCancel = () => {
         setForm(initialFormState);
+        setImageFiles([])
         onCancel && onCancel();
     };
 
@@ -173,40 +175,26 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
 
             {/* --- IMÁGENES --- */}
             <div className="flex gap-4 flex-wrap items-end">
+
+                {/* 🔵 IMÁGENES DEL BACKEND (form.images => URLS) */}
                 {form.images.length > 0 &&
                     form.images.map((imgUrl, idx) => (
-                        <div key={idx} className="relative w-40 h-40 group">
+                        <div key={`server-${idx}`} className="relative w-40 h-40 group">
                             <img
                                 src={imgUrl}
                                 alt={`Imagen ${idx + 1}`}
                                 className="w-full h-full object-cover rounded-lg group-hover:opacity-20 transition absolute"
                             />
 
+                            {/* Eliminar solo de form.images */}
                             <IconButton
                                 size="small"
-                                onClick={() => setShowImageModal({ index: idx, url: imgUrl })}
-                                sx={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    zIndex: 10,
-                                    "&:hover": {
-                                        color: "white",
-                                        backgroundColor: "rgba(0, 0, 0, 0.7)",
-                                    },
-                                }}
-                            >
-                                <EditIcon fontSize="medium" />
-                            </IconButton>
-
-                            <IconButton
-                                size="small"
-                                onClick={() =>
+                                onClick={() => {
                                     setForm((prev) => ({
                                         ...prev,
                                         images: prev.images.filter((_, i) => i !== idx),
-                                    }))
-                                }
+                                    }));
+                                }}
                                 sx={{
                                     position: "absolute",
                                     top: 0,
@@ -224,6 +212,39 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                         </div>
                     ))}
 
+                {/* 🟢 IMÁGENES NUEVAS (imageFiles => FILES) */}
+                {imageFiles.map((file, idx) => (
+                    <div key={`file-${idx}`} className="relative w-40 h-40 group">
+                        <img
+                            src={URL.createObjectURL(file)}
+                            alt={`Nueva imagen ${idx + 1}`}
+                            className="w-full h-full object-cover rounded-lg group-hover:opacity-20 transition absolute"
+                        />
+
+                        {/* Eliminar solo de imageFiles */}
+                        <IconButton
+                            size="small"
+                            onClick={() => {
+                                setImageFiles((prev) => prev.filter((_, i) => i !== idx));
+                            }}
+                            sx={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                zIndex: 10,
+                                color: "#d10003",
+                                "&:hover": {
+                                    color: "white",
+                                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                },
+                            }}
+                        >
+                            <DeleteIcon fontSize="medium" />
+                        </IconButton>
+                    </div>
+                ))}
+
+                {/* BOTÓN + AGREGAR */}
                 <button
                     type="button"
                     onClick={() => setShowImageModal({ index: null, url: "" })}
@@ -412,21 +433,24 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
 
             {showImageModal && (
                 <ImageEditModal
-                    initialUrl={showImageModal.url}
-                    onSave={(newUrl) => {
-                        setForm((prev) => {
-                            let updatedImages = [...prev.images];
+                    onSave={(file, previewUrl) => {
+                        // 1) Agregamos archivo a imageFiles
+                        setImageFiles((prev) => {
+                            const updated = [...prev];
                             if (showImageModal.index !== null) {
-                                updatedImages[showImageModal.index] = newUrl;
+                                updated[showImageModal.index] = file;
                             } else {
-                                updatedImages.push(newUrl);
+                                updated.push(file);
                             }
-                            return { ...prev, images: updatedImages };
+                            return updated;
                         });
+
+
                         setShowImageModal(false);
                     }}
                     onClose={() => setShowImageModal(false)}
                 />
+
             )}
         </form>
     );
