@@ -114,6 +114,22 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
         });
     };
 
+    const handleNumberChange = (e) => {
+        const { name, value } = e.target;
+
+        // Evita escribir "-"
+        if (value.includes("-")) return;
+
+        // Si no es número o es vacío, lo permitimos (para que pueda borrar)
+        if (value === "" || !isNaN(value)) {
+            setForm((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
+    };
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const parseDiscount = parseFloat(form.discount) / 100
@@ -226,7 +242,13 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     label="Código de producto"
                     type="number"
                     value={form.productCode}
-                    onChange={handleChange}
+                    onChange={handleNumberChange}
+                    onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "+") {
+                            e.preventDefault();
+                        }
+                    }}
+
                     required
                 />
                 <TextField
@@ -241,7 +263,13 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     label="Precio Normal"
                     type="number"
                     value={form.unitPrice}
-                    onChange={handleChange}
+                    onChange={handleNumberChange}
+                    onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "+") {
+                            e.preventDefault();
+                        }
+                    }}
+
                     required
                 />
                 <TextField
@@ -249,7 +277,13 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     label="Descuento (%)"
                     type="number"
                     value={form.discount}
-                    onChange={handleChange}
+                    onChange={handleNumberChange}
+                    onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "+") {
+                            e.preventDefault();
+                        }
+                    }}
+
                 />
                 <TextField
                     name="price"
@@ -263,7 +297,12 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     label="Stock"
                     type="number"
                     value={form.stock}
-                    onChange={handleChange}
+                    onChange={handleNumberChange}
+                    onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "+") {
+                            e.preventDefault();
+                        }
+                    }}
                     required
                 />
                 <TextField
@@ -273,6 +312,14 @@ export default function ProductForm({ onSave, editingProduct, onCancel }) {
                     step="0.1"
                     value={form.calification}
                     InputProps={{ readOnly: true }}
+                    sx={{
+                        "& .MuiInputBase-input": {
+                            color: "gray",       // color de la fuente
+                        },
+                        "& .MuiInputLabel-root": {
+                            color: "gray",       // color del label
+                        },
+                    }}
                 />
 
                 <CategoryModal

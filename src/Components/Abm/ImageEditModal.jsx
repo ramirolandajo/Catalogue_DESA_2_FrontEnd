@@ -11,13 +11,13 @@ export default function ImageEditModal({ initialUrl, onSave, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/[0.75] flex justify-center items-center z-50">
-            <div className="bg-white rounded-xl p-6 shadow-lg w-[400px]">
+            <div className="bg-white rounded-xl p-6 shadow-lg w-[500px]">
                 <h2 className="text-lg font-semibold mb-4">Editar Imagen</h2>
 
                 <div className="space-y-4">
                     <input
                         type="text"
-                        placeholder="URL de la imagen"
+                        placeholder="URL de la imagen (Asegurate que no sea extensión .WEBP)"
                         value={newUrl}
                         onChange={(e) => setNewUrl(e.target.value)}
                         className="border rounded-lg p-2 w-full"
